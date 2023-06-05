@@ -100,7 +100,7 @@ afterEvaluate {
             }
             maven {
                 name = "ATGcpPublicPackages"
-                url = "artifactregistry://europe-west1-maven.pkg.dev/sep-infra/tmp-maven-registry"
+                url = "gcs://tmp-maven-repo/maven/release"
             }
         }
     }
