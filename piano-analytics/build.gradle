@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'maven-publish'
+    id "com.google.cloud.artifactregistry.gradle-plugin" version "2.2.0"
 }
 
 android {
@@ -96,6 +97,10 @@ afterEvaluate {
                     username = project.findProperty('githubActor') ?: System.getenv("GITHUB_ACTOR")
                     password = project.findProperty('githubPublishToken') ?: System.getenv("GITHUB_PUBLISH_TOKEN")
                 }
+            }
+            maven {
+                name = "ATGcpPublicPackages"
+                url = "artifactregistry://europe-west1-maven.pkg.dev/sep-infra/tmp-maven-registry"
             }
         }
     }
