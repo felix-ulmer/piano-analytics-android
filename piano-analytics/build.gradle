@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'maven-publish'
-    id "com.google.cloud.artifactregistry.gradle-plugin" version "2.2.0"
+    id "com.google.cloud.artifactregistry.gradle-plugin" version "2.2.1"
 }
 
 android {
@@ -32,6 +32,10 @@ android {
     testOptions {
         unitTests.includeAndroidResources = true
     }
+}
+
+allprojects {
+    ext.repositoryURL = "artifactregistry://europe-west1-maven.pkg.dev/sep-infra/tmp-maven-registry"
 }
 
 task androidSourcesJar(type: Jar) {
