@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.moshiIR)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.mavenRelease)
+    `maven-publish`
 }
 
 val GROUP: String by project
@@ -35,6 +36,22 @@ android {
     namespace = "io.piano.android.analytics"
 }
 
+val sourcesJar = task<Jar>("androidSourcesJar") {
+    archiveClassifier.set("sources")
+
+    if (project.plugins.findPlugin("com.android.library") != null) {
+        from(android.sourceSets["main"].java.srcDirs)
+        from(android.sourceSets["main"].kotlin.srcDirs())
+
+    } else {
+        from(sourceSets["main"].java.srcDirs)
+    }
+}
+
+artifacts {
+    archives(sourcesJar)
+}
+
 kotlin {
     explicitApi()
     jvmToolchain {
@@ -45,6 +62,45 @@ kotlin {
 ktlint {
     version.set("0.49.1")
     android.set(true)
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                groupId = "io.piano"
+                artifactId = "analytics"
+                version = "3.3.1"
+
+                pom {
+                    name.set("analytics")
+                    description.set("Piano Analytics SDK for Android")
+                    url.set("https://github.com/digitalegarage/audiopilot-android/")
+                    developers {
+                        developer {
+                            id.set("felix-ulmer")
+                            name.set("Felix Ulmer")
+                            email.set("felix.ulmer@andrena.de")
+                        }
+                    }
+                }
+                artifacts.apply {
+                    add(artifact("$buildDir/outputs/aar/piano-analytics-release.aar"))
+                }
+            }
+        }
+
+        repositories {
+            maven {
+                name = "ATGithubPackages"
+                url = uri("https://maven.pkg.github.com/digitalegarage/audiopilot-android")
+                credentials {
+                    username = System.getenv("GITHUB_ACTOR") ?: ""
+                    password = System.getenv("GITHUB_PUBLISH_TOKEN") ?: ""
+                }
+            }
+        }
+    }
 }
 
 dependencies {
